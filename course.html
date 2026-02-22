@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Watch course on Code With Sandesh">
+    <title>Course — Code With Sandesh</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">&lt;/&gt;</div>
+                Code<span class="highlight">WithSandesh</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+            </div>
+            <div class="nav-actions" id="nav-actions"></div>
+            <div class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('mobile-open')">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Course Content -->
+    <div class="container">
+        <div class="course-detail-layout">
+            <div class="course-main">
+                <!-- Video Player -->
+                <div class="video-wrapper" id="video-wrapper">
+                    <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+
+                <!-- Course Info -->
+                <div style="margin-top:var(--space-xl)">
+                    <div style="display:flex;gap:var(--space-sm);margin-bottom:var(--space-md)">
+                        <span class="badge badge-category" id="course-category"></span>
+                        <span class="badge" id="course-type-badge"></span>
+                    </div>
+                    <h1 id="course-title" style="font-size:1.8rem;margin-bottom:var(--space-md)">Loading...</h1>
+                    <p id="course-description" style="color:var(--text-secondary);font-size:1.05rem;line-height:1.7">
+                    </p>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="course-sidebar">
+                <div class="sidebar-card" id="course-sidebar-card">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer" style="margin-top:var(--space-3xl)">
+        <div class="container">
+            <div class="footer-bottom">
+                <span>&copy; 2026 Code With Sandesh</span>
+                <span>Made with 💜 by Sandesh</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            showLoader();
+            const user = await requireAuth();
+            if (!user) return; // Not logged in, redirect handled
+
+            const courseId = new URLSearchParams(window.location.search).get('id');
+            if (!courseId) { window.location.href = 'courses.html'; return; }
+
+            const course = await db.getCourse(courseId);
+            if (!course) {
+                showToast('Course not found', 'error');
+                window.location.href = 'courses.html';
+                return;
+            }
+
+            // Check paid access
+            if (course.type === 'paid') {
+                const enrolled = await db.isEnrolled(user.uid, courseId);
+                if (!enrolled && !isAdmin(user)) {
+                    showToast('This is a paid course. Please complete payment first.', 'warning');
+                    window.location.href = `payment.html?id=${courseId}`;
+                    return;
+                }
+            } else {
+                // Auto-enroll for free courses
+                await db.enrollUser(user.uid, courseId);
+            }
+
+            renderCourse(course);
+        });
+
+        function renderCourse(course) {
+            document.title = `${course.title} — Code With Sandesh`;
+
+            // Video
+            const videoId = extractYouTubeId(course.youtubeUrl);
+            const wrapper = document.getElementById('video-wrapper');
+            if (videoId) {
+                wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>`;
+            } else {
+                wrapper.innerHTML = '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--text-muted)"><p>Video not available</p></div>';
+            }
+
+            // Info
+            document.getElementById('course-title').textContent = course.title;
+            document.getElementById('course-description').textContent = course.description || '';
+            document.getElementById('course-category').textContent = course.category || 'General';
+
+            const typeBadge = document.getElementById('course-type-badge');
+            if (course.type === 'paid') {
+                typeBadge.className = 'badge badge-paid';
+                typeBadge.textContent = 'Rs. ' + (course.price || 'Paid');
+            } else {
+                typeBadge.className = 'badge badge-free';
+                typeBadge.textContent = 'Free';
+            }
+
+            // Sidebar
+            const sidebar = document.getElementById('course-sidebar-card');
+            sidebar.innerHTML = `
+        <div style="margin-bottom:var(--space-lg)">
+          <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-xs)">Category</div>
+          <div style="font-weight:600">${course.category || 'General'}</div>
+        </div>
+        <div style="margin-bottom:var(--space-lg)">
+          <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-xs)">Type</div>
+          <span class="badge badge-${course.type === 'paid' ? 'paid' : 'free'}">${course.type === 'paid' ? 'Premium' : 'Free'}</span>
+        </div>
+        <div style="margin-bottom:var(--space-lg)">
+          <div style="font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:var(--space-xs)">Added</div>
+          <div style="font-weight:500;font-size:0.9rem">${formatDate(course.createdAt)}</div>
+        </div>
+        <hr style="border:none;border-top:1px solid var(--border-color);margin:var(--space-lg) 0">
+        <a href="courses.html" class="btn btn-secondary" style="width:100%"><i class="fas fa-arrow-left"></i> Back to Courses</a>
+      `;
+        }
+    </script>
+</body>
+
+</html>

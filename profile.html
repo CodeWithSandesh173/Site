@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — Code With Sandesh</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">&lt;/&gt;</div>
+                Code<span class="highlight">WithSandesh</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+            </div>
+            <div class="nav-actions" id="nav-actions"></div>
+            <div class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('mobile-open')">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Profile -->
+    <div class="container"
+        style="padding-top:calc(var(--nav-height) + var(--space-2xl));padding-bottom:var(--space-3xl)">
+        <div class="profile-header" id="profile-header">
+            <div class="profile-avatar" id="profile-avatar">?</div>
+            <div class="profile-info">
+                <h2 id="profile-name">Loading...</h2>
+                <p id="profile-email" style="margin-bottom:var(--space-xs)"></p>
+                <span class="badge badge-approved" id="profile-verified" style="display:none">
+                    <i class="fas fa-check-circle"></i> Verified
+                </span>
+            </div>
+        </div>
+
+        <!-- Enrolled Courses -->
+        <div style="margin-bottom:var(--space-2xl)">
+            <h3 style="margin-bottom:var(--space-lg)"><i class="fas fa-book-open"
+                    style="color:var(--accent-secondary)"></i> My Courses</h3>
+            <div class="courses-grid" id="enrolled-courses">
+                <div class="empty-state" style="grid-column:1/-1">
+                    <div class="spinner" style="margin:0 auto var(--space-lg)"></div>
+                    <p>Loading courses...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payment History -->
+        <div>
+            <h3 style="margin-bottom:var(--space-lg)"><i class="fas fa-receipt"
+                    style="color:var(--accent-secondary)"></i> Payment History</h3>
+            <div id="payment-history">
+                <div style="text-align:center;padding:var(--space-xl)">
+                    <div class="spinner" style="margin:0 auto"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <span>&copy; 2026 Code With Sandesh</span>
+                <span>Made with 💜 by Sandesh</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            showLoader();
+            const user = await requireAuth();
+            if (!user) return; // Not logged in, redirect handled
+
+            // Profile header
+            const initial = (user.displayName || user.email || '?')[0].toUpperCase();
+            document.getElementById('profile-avatar').textContent = initial;
+            document.getElementById('profile-name').textContent = user.displayName || 'User';
+            document.getElementById('profile-email').textContent = user.email;
+            if (user.emailVerified) {
+                document.getElementById('profile-verified').style.display = 'inline-flex';
+            }
+
+            // Load enrolled courses
+            const userData = await db.getUser(user.uid);
+            const enrolledIds = userData?.enrolledCourses ? Object.keys(userData.enrolledCourses) : [];
+            const allCourses = await db.getCourses();
+            const enrolled = allCourses.filter(c => enrolledIds.includes(c.id));
+
+            const grid = document.getElementById('enrolled-courses');
+            if (enrolled.length === 0) {
+                grid.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1">
+            <div class="empty-icon">📚</div>
+            <h3>No courses yet</h3>
+            <p>Browse our collection and start learning!</p>
+            <a href="courses.html" class="btn btn-primary">Browse Courses</a>
+        </div>`;
+            } else {
+                grid.innerHTML = enrolled.map(c => {
+                    const thumb = c.thumbnail || getYouTubeThumbnail(c.youtubeUrl);
+                    return `
+            <div class="course-card" onclick="location.href='course.html?id=${c.id}'">
+            <div class="card-thumb">
+                <img src="${thumb}" alt="${c.title}" onerror="this.src='https://via.placeholder.com/640x360/1a1a2e/7c3aed?text=Code With Sandesh'">
+                <div class="thumb-overlay"><div class="play-icon">▶</div></div>
+            </div>
+            <div class="card-body">
+                <span class="card-category">${c.category || 'General'}</span>
+                <h3 class="card-title">${c.title}</h3>
+            </div>
+            <div class="card-footer">
+                <span class="badge badge-${c.type === 'paid' ? 'paid' : 'free'}">${c.type === 'paid' ? 'Premium' : 'Free'}</span>
+            </div>
+            </div>`;
+                }).join('');
+            }
+
+            // Payment history
+            const payments = await db.getUserPayments(user.uid);
+            const historyEl = document.getElementById('payment-history');
+            if (payments.length === 0) {
+                historyEl.innerHTML = `
+        <div class="card" style="text-align:center;padding:var(--space-xl)">
+            <p style="color:var(--text-muted)">No payment history</p>
+        </div>`;
+            } else {
+                historyEl.innerHTML = `
+        <div style="overflow-x:auto">
+            <table class="data-table">
+            <thead><tr><th>Course</th><th>Status</th><th>Date</th></tr></thead>
+            <tbody>
+                ${payments.map(p => `
+                <tr>
+                    <td>${p.courseTitle}</td>
+                    <td><span class="badge badge-${p.status}">${p.status}</span></td>
+                    <td style="font-size:0.85rem;color:var(--text-muted)">${formatDate(p.createdAt)}</td>
+                </tr>`).join('')}
+            </tbody>
+            </table>
+        </div>`;
+            }
+        });
+    </script>
+</body>
+
+</html>

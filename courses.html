@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse coding courses at Code With Sandesh">
+    <title>Courses — Code With Sandesh</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">&lt;/&gt;</div>
+                Code<span class="highlight">WithSandesh</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html" class="active">Courses</a>
+                <a href="https://github.com/DeveloperSandesh" target="_blank">GitHub</a>
+            </div>
+            <div class="nav-actions" id="nav-actions">
+                <a href="login.html" class="btn btn-sm btn-primary">Login</a>
+            </div>
+            <div class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('mobile-open')">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <div class="section-label"><i class="fas fa-graduation-cap"></i> All Courses</div>
+            <h1>Explore <span class="text-gradient">Courses</span></h1>
+            <p>Find the perfect tutorial to level up your skills</p>
+        </div>
+    </div>
+
+    <!-- Filters + Search -->
+    <section style="padding-bottom:var(--space-2xl)">
+        <div class="container">
+            <div
+                style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-lg);margin-bottom:var(--space-xl)">
+                <div class="filter-pills" id="filter-pills">
+                    <button class="filter-pill active" data-category="all">All</button>
+                </div>
+                <div class="search-bar">
+                    <span class="search-icon"><i class="fas fa-search"></i></span>
+                    <input type="text" id="search-input" placeholder="Search courses...">
+                </div>
+            </div>
+
+            <!-- Courses Grid -->
+            <div class="courses-grid stagger-children" id="courses-grid">
+                <div class="empty-state" style="grid-column:1/-1">
+                    <div class="spinner" style="margin:0 auto var(--space-lg)"></div>
+                    <p>Loading courses...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <span>&copy; 2026 Code With Sandesh. All rights reserved.</span>
+                <span>Made with 💜 by Sandesh</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/courses.js"></script>
+</body>
+
+</html>

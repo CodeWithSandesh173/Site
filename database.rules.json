@@ -1,0 +1,24 @@
+{
+  "rules": {
+    "users": {
+      ".read": "auth != null && (auth.token.email === 'server@premiumserver.qzz.io' || auth.token.email === 'bhandaryshandesh2@gmail.com')",
+      ".write": "auth != null && (auth.token.email === 'server@premiumserver.qzz.io' || auth.token.email === 'bhandaryshandesh2@gmail.com')",
+      "$uid": {
+         ".read": "auth != null && auth.uid === $uid",
+         ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+    "courses": {
+      ".read": "true",
+      ".write": "auth != null && (auth.token.email === 'server@premiumserver.qzz.io' || auth.token.email === 'bhandaryshandesh2@gmail.com')"
+    },
+    "paymentRequests": {
+      ".read": "auth != null && (auth.token.email === 'server@premiumserver.qzz.io' || auth.token.email === 'bhandaryshandesh2@gmail.com' || (query.orderByChild == 'userId' && query.equalTo == auth.uid))",
+      ".write": "auth != null && (auth.token.email === 'server@premiumserver.qzz.io' || auth.token.email === 'bhandaryshandesh2@gmail.com')",
+      ".indexOn": ["userId"],
+      "$requestId": {
+        ".write": "auth != null && newData.child('userId').val() === auth.uid && !data.exists()"
+      }
+    }
+  }
+}

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Login or create an account at Code With Sandesh">
+    <title>Login — Code With Sandesh</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="index.html" class="nav-brand">
+                <div class="brand-icon">&lt;/&gt;</div>
+                Code<span class="highlight">WithSandesh</span>
+            </a>
+            <div class="nav-links" id="nav-links">
+                <a href="index.html">Home</a>
+                <a href="courses.html">Courses</a>
+            </div>
+            <div class="nav-actions" id="nav-actions">
+                <a href="login.html" class="btn btn-sm btn-primary active">Login</a>
+            </div>
+            <div class="nav-toggle" onclick="document.getElementById('nav-links').classList.toggle('mobile-open')">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <div style="font-size:2.5rem;margin-bottom:var(--space-md)">🔐</div>
+                <h2>Welcome Back</h2>
+                <p>Sign in to access your courses</p>
+            </div>
+
+            <!-- Alert -->
+            <div id="auth-alert" class="alert hidden"></div>
+
+            <!-- Auth Tabs (Removed) -->
+
+            <!-- Login Form (Google Only Now) -->
+            <form id="login-form">
+                <div id="panel-login" style="text-align: center; padding: var(--space-xl) 0;">
+                    <p style="margin-bottom: var(--space-xl); color: var(--text-secondary);">
+                        Please sign in with your Google account to continue.
+                    </p>
+                    <button type="button" id="google-login-btn" class="btn btn-secondary"
+                        style="width:100%; display:flex; align-items:center; justify-content:center; gap: 10px; background-color: white; color: #333; border: 1px solid #ddd; padding: var(--space-md);">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google"
+                            style="width: 24px; height: 24px;">
+                        <span style="font-size: 1.1rem; font-weight: 500;">Sign in with Google</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/database.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+
+</html>
