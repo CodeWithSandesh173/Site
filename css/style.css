@@ -2006,8 +2006,17 @@ button {
     background: var(--bg-glass-hover);
   }
 
+  .nav-content {
+    justify-content: flex-start;
+  }
+
   .nav-brand {
+    margin-right: auto;
     font-size: 1.2rem;
+  }
+
+  .nav-actions {
+    margin-right: var(--space-md);
   }
 
   .nav-brand .brand-icon {
