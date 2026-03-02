@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>reCAPTCHA Enterprise Test</title>
+
+  <!-- Load reCAPTCHA Enterprise -->
+  <script src="https://www.google.com/recaptcha/enterprise.js?render=YOUR_SITE_KEY"></script>
+
+</head>
+<body>
+
+<h2>reCAPTCHA Enterprise Test</h2>
+
+<button onclick="runRecaptcha()">Test reCAPTCHA</button>
+
+<pre id="result"></pre>
+
+<script>
+  async function runRecaptcha() {
+
+    grecaptcha.enterprise.ready(async () => {
+
+      const token = await grecaptcha.enterprise.execute(
+        'YOUR_SITE_KEY',
+        { action: 'LOGIN' }
+      );
+
+      console.log("Token:", token);
+
+      // Send token to Google API
+      const response = await fetch(
+        "https://recaptchaenterprise.googleapis.com/v1/projects/YOUR_PROJECT_ID/assessments?key=YOUR_API_KEY",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            event: {
+              token: token,
+              expectedAction: "LOGIN",
+              siteKey: "YOUR_SITE_KEY"
+            }
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      document.getElementById("result").innerText =
+        JSON.stringify(data, null, 2);
+
+    });
+
+  }
+</script>
+
+</body>
+</html>
