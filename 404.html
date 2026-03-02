@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Error 404: Page Not Found" />
+  <title>Error 404 — Page Not Found</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{
+      min-height:100vh;display:flex;align-items:center;justify-content:center;
+      padding:1.5rem;font-family:"Inter",system-ui,sans-serif;
+      background:radial-gradient(ellipse at 20% 50%,#1a0533 0%,#0d0d1a 60%,#000510 100%);
+      color:#e2e8f0;overflow:hidden;
+    }
+    .blob{position:fixed;border-radius:50%;filter:blur(80px);opacity:0.18;pointer-events:none;animation:float 12s ease-in-out infinite alternate;}
+    .blob-1{width:500px;height:500px;background:#7c3aed;top:-120px;left:-120px;animation-duration:14s;}
+    .blob-2{width:420px;height:420px;background:#2563eb;bottom:-100px;right:-100px;animation-duration:10s;animation-direction:alternate-reverse;}
+    @keyframes float{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,20px) scale(1.05)}}
+    .card{
+      position:relative;max-width:520px;width:100%;
+      background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);
+      border-radius:24px;padding:3rem 2.5rem 2.5rem;text-align:center;
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      box-shadow:0 0 0 1px rgba(255,255,255,0.05),0 32px 64px rgba(0,0,0,0.4),0 0 80px rgba(124,58,237,0.08);
+    }
+    .badge{
+      display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;
+      text-transform:uppercase;color:#a78bfa;background:rgba(124,58,237,0.15);
+      border:1px solid rgba(124,58,237,0.35);border-radius:999px;padding:0.3rem 1rem;margin-bottom:1.5rem;
+    }
+    .error-code{
+      font-size:clamp(5rem,20vw,8rem);font-weight:900;line-height:1;letter-spacing:-0.04em;
+      background:linear-gradient(135deg,#a78bfa,#60a5fa,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;margin-bottom:0.5rem;animation:glow 3s ease-in-out infinite;
+    }
+    @keyframes glow{0%,100%{filter:drop-shadow(0 0 12px rgba(167,139,250,0.4))}50%{filter:drop-shadow(0 0 28px rgba(96,165,250,0.6))}}
+    .subheading{font-size:1.25rem;font-weight:700;color:#f1f5f9;margin-bottom:0.5rem;}
+    .error-title{font-size:0.9rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1rem;}
+    .description{font-size:0.95rem;color:#94a3b8;line-height:1.7;}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);margin:2rem 0;}
+    .actions{display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;
+      font-family:"Inter",sans-serif;font-size:0.875rem;font-weight:600;
+      padding:0.65rem 1.5rem;border-radius:12px;border:none;cursor:pointer;
+      text-decoration:none;transition:all 0.2s ease;letter-spacing:0.02em;
+    }
+    .btn-primary{background:linear-gradient(135deg,#7c3aed,#2563eb);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,0.35);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(124,58,237,0.5);filter:brightness(1.1);}
+    .btn-secondary{background:rgba(255,255,255,0.07);color:#cbd5e1;border:1px solid rgba(255,255,255,0.12);}
+    .btn-secondary:hover{background:rgba(255,255,255,0.12);color:#f1f5f9;transform:translateY(-2px);}
+    .footer-note{font-size:0.75rem;color:#475569;}
+    .footer-note span{color:#7c3aed;font-weight:600;}
+    @media(max-width:480px){
+      .card{padding:2.5rem 1.5rem 2rem;}
+      .actions{flex-direction:column;align-items:stretch;}
+      .btn{width:100%;}
+    }
+  </style>
+</head>
+<body>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="card">
+    <span class="badge">Client Error</span>
+    <h1 class="error-code">404</h1>
+    <h2 class="subheading">Oops! Something went wrong.</h2>
+    <p class="error-title">Page Not Found</p>
+    <p class="description">The page you're looking for doesn't exist or has been moved. Double-check the URL and try again.</p>
+    <div class="divider"></div>
+    <div class="actions">
+      <a href="/index.html" class="btn btn-primary">&#8592; Back to Homepage</a>
+      <button class="btn btn-secondary" onclick="window.history.back()">Go Back</button>
+    </div>
+    <p class="footer-note">Error Code: <span>404</span> &mdash; If this keeps happening, please contact support.</p>
+  </div>
+</body>
+</html>
