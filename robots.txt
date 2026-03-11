@@ -1,0 +1,6 @@
+# Allow all search engines to crawl the site
+User-agent: *
+Allow: /
+
+# Link to the sitemap
+Sitemap: https://codewithsandesh.qzz.io/sitemap.xml
